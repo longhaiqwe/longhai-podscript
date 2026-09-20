@@ -1,24 +1,26 @@
 # Longhai Podscript
 
-> 在 Obsidian 里搜索播客 → 一键抓文字稿 → 存成结构化笔记。
+> Search a podcast inside Obsidian → fetch its full transcript in one click → save it as a structured note.
 
 <p align="center">
-  <img src="docs/images/01-panel.png" width="620" alt="Longhai Podscript 面板">
+  <img src="docs/images/01-panel.png" width="620" alt="Longhai Podscript panel">
 </p>
+
+**Longhai Podscript** fetches full podcast transcripts inside Obsidian and saves them as structured notes. Give it a YouTube link, an Apple Podcasts page, a direct audio URL, or just a title keyword: it reuses existing captions when available (instant), and otherwise transcribes the audio locally with [`faster-whisper`](https://github.com/SYSTRAN/faster-whisper) — free, offline, and without any paid API. The saved transcript is your starting point for further editing, translation, and publishing.
+
+**Desktop only.** The plugin runs a local Python helper, so it needs Python 3.9+ on your machine. On first use it shows a consent dialog, then creates an isolated virtual environment under `~/.longhai-podscript` (outside your vault) and installs `yt-dlp` and `faster-whisper` there. Nothing is uploaded; everything runs locally. Each transcript is saved as a note whose front matter records its source, quality, and date.
+
+The detailed installation and usage guide below is written in Chinese.
+
+---
+
+## 中文说明
+
+> 在 Obsidian 里搜索播客 → 一键抓文字稿 → 存成结构化笔记。
 
 搜到你爱听的播客，点一下就把整集的文字稿抓下来落成一篇笔记——不管这集有没有现成字幕。有字幕就用字幕（秒回），纯音频就在你电脑本地用 Whisper 转写，**全程免费，不用任何付费 API，也不用先装什么 AI 工具**。
 
 抓完的文字稿是后续「脱水改稿、翻译、发布」的起点。
-
-## In English
-
-**Longhai Podscript** fetches full podcast transcripts inside Obsidian and saves them as structured notes. Give it a YouTube link, an Apple Podcasts page, a direct audio URL, or just a title keyword: it reuses existing captions when available (instant), and otherwise transcribes the audio locally with [`faster-whisper`](https://github.com/SYSTRAN/faster-whisper) — free, offline, and without any paid API.
-
-**Desktop only.** The plugin runs a local Python helper, so it needs Python 3.9+ on your machine. On first use it shows a consent dialog, then creates an isolated virtual environment under `~/.longhai-podscript` (outside your vault) and installs `yt-dlp` and `faster-whisper` there. Nothing is uploaded; everything runs locally. Each transcript is saved as a note whose front matter records the source, quality, and date, ready for further editing, translation, or publishing.
-
-See the Chinese sections below for detailed installation and usage instructions.
-
----
 
 ## 能做什么
 
