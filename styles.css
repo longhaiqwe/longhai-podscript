@@ -1,0 +1,1155 @@
+/* ===== Longhai Podscript · 右侧面板 ===== */
+
+/* 面板挂在 .view-content 上：改成占满高度的三段式布局，
+   自己管理滚动，避免整块内容（含标题）一起被滚走。 */
+.longhai-podscript-panel {
+	height: 100%;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 0;
+	overflow: hidden;
+}
+
+/* 固定顶部区：品牌 + 搜索 + 分类标签，不参与滚动 */
+.sp-top {
+	flex-shrink: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	padding: 10px 12px;
+	border-bottom: 1px solid var(--background-modifier-border);
+}
+
+/* 固定底部区：手动抓取 + 任务卡片，常驻底部 */
+.sp-footer {
+	flex-shrink: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	padding: 8px 12px 12px;
+	border-top: 1px solid var(--background-modifier-border);
+	max-height: 60%;
+	overflow-y: auto;
+}
+
+/* —— 头部 —— */
+.sp-header {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	padding-bottom: 2px;
+}
+
+.sp-brand {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+}
+
+.sp-brand-icon {
+	display: inline-flex;
+	color: var(--text-accent);
+}
+
+.sp-brand-icon svg {
+	width: 16px;
+	height: 16px;
+}
+
+.sp-brand-name {
+	font-size: 14px;
+	font-weight: 600;
+	color: var(--text-normal);
+	letter-spacing: 0.01em;
+}
+
+.sp-brand-sub {
+	font-size: 11px;
+	color: var(--text-muted);
+}
+
+/* —— 搜索框（图标与输入并排，避免主题内边距导致重叠）—— */
+.sp-search {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	padding: 0 8px;
+	background: var(--background-primary);
+	border: 1px solid var(--background-modifier-border);
+	border-radius: 8px;
+	transition: border-color 0.12s ease, box-shadow 0.12s ease;
+}
+
+.sp-search:focus-within {
+	border-color: var(--interactive-accent);
+	box-shadow: 0 0 0 2px var(--background-modifier-border-focus);
+}
+
+.sp-search-icon {
+	display: inline-flex;
+	flex-shrink: 0;
+	color: var(--text-muted);
+}
+
+.sp-search-icon svg {
+	width: 15px;
+	height: 15px;
+}
+
+.sp-search-input.sp-search-input {
+	flex: 1;
+	min-width: 0;
+	height: auto;
+	padding: 7px 0;
+	background: transparent;
+	border: none;
+	border-radius: 0;
+	box-shadow: none !important;
+	outline: none;
+}
+
+.sp-search-clear {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 18px;
+	height: 18px;
+	flex-shrink: 0;
+	border-radius: 50%;
+	color: var(--text-muted);
+	cursor: pointer;
+}
+
+.sp-search-clear:hover {
+	background: var(--background-modifier-hover);
+	color: var(--text-normal);
+}
+
+.sp-search-clear svg {
+	width: 13px;
+	height: 13px;
+}
+
+/* —— 分段标签 —— */
+.sp-tabs {
+	display: flex;
+	gap: 3px;
+	padding: 3px;
+	background: var(--background-secondary);
+	border-radius: 8px;
+}
+
+.sp-tab {
+	flex: 1;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 5px;
+	padding: 4px 6px;
+	font-size: 12px;
+	cursor: pointer;
+	background: transparent;
+	border: none;
+	border-radius: 6px;
+	color: var(--text-muted);
+	box-shadow: none;
+	transition: background 0.12s ease, color 0.12s ease;
+}
+
+.sp-tab:hover {
+	color: var(--text-normal);
+}
+
+.sp-tab.is-active {
+	background: var(--background-primary);
+	color: var(--text-normal);
+	font-weight: 600;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+}
+
+.sp-tab-count {
+	font-size: 10px;
+	line-height: 1;
+	padding: 1px 5px;
+	border-radius: 8px;
+	background: var(--background-modifier-border);
+	color: var(--text-muted);
+	font-variant-numeric: tabular-nums;
+}
+
+.sp-tab.is-active .sp-tab-count {
+	background: var(--interactive-accent);
+	color: var(--text-on-accent);
+}
+
+/* —— 结果列表：唯一的纵向滚动区，自动撑满顶部与底部之间的空间 —— */
+.sp-search-results {
+	flex: 1 1 auto;
+	min-height: 0;
+	overflow-y: auto;
+	padding: 10px 12px;
+}
+
+.sp-section-title {
+	display: flex;
+	align-items: baseline;
+	gap: 8px;
+	font-size: 11px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+	color: var(--text-muted);
+	margin: 10px 2px 4px;
+}
+
+.sp-section-hint {
+	font-size: 10px;
+	font-weight: 400;
+	text-transform: none;
+	letter-spacing: 0;
+	color: var(--text-faint);
+	margin-left: auto;
+}
+
+.sp-item {
+	display: flex;
+	gap: 9px;
+	align-items: center;
+	padding: 7px 6px;
+	border-radius: 8px;
+	cursor: pointer;
+	transition: background 0.12s ease;
+}
+
+.sp-item:hover {
+	background: var(--background-modifier-hover);
+}
+
+.sp-item.is-disabled {
+	cursor: default;
+	opacity: 0.5;
+}
+
+.sp-item.is-disabled:hover {
+	background: transparent;
+}
+
+.sp-item-art {
+	width: 42px;
+	height: 42px;
+	border-radius: 7px;
+	object-fit: cover;
+	flex-shrink: 0;
+	background: var(--background-secondary);
+}
+
+.sp-item-art-ph {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: var(--text-faint);
+}
+
+.sp-item-art-ph svg {
+	width: 20px;
+	height: 20px;
+}
+
+.sp-item-main {
+	min-width: 0;
+	flex: 1;
+}
+
+.sp-item-title {
+	font-size: 13px;
+	color: var(--text-normal);
+	line-height: 1.3;
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+}
+
+.sp-item-sub {
+	margin-top: 2px;
+	font-size: 11px;
+	color: var(--text-muted);
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+/* 右侧动作图标：下钻箭头 / 抓取下载 */
+.sp-item-action {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 26px;
+	height: 26px;
+	border-radius: 6px;
+	flex-shrink: 0;
+	color: var(--text-faint);
+	transition: background 0.12s ease, color 0.12s ease, opacity 0.12s ease;
+}
+
+.sp-item-action svg {
+	width: 16px;
+	height: 16px;
+}
+
+.sp-item-chevron {
+	color: var(--text-muted);
+}
+
+.sp-item-podcast:hover .sp-item-chevron {
+	color: var(--text-normal);
+	transform: translateX(1px);
+}
+
+/* 抓取图标默认低调，hover 时高亮成强调色，明确"点了会抓取" */
+.sp-item-fetch {
+	opacity: 0.55;
+}
+
+.sp-item-episode:hover .sp-item-fetch {
+	opacity: 1;
+	background: var(--interactive-accent);
+	color: var(--text-on-accent);
+}
+
+/* —— 返回 —— */
+.sp-back {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	cursor: pointer;
+	background: none;
+	border: none;
+	box-shadow: none;
+	color: var(--text-accent);
+	padding: 4px 2px;
+	font-size: 12px;
+}
+
+.sp-back:hover {
+	color: var(--text-accent-hover);
+}
+
+.sp-back-icon {
+	display: inline-flex;
+}
+
+.sp-back-icon svg {
+	width: 14px;
+	height: 14px;
+}
+
+/* —— 加载 / 提示 / 空状态 —— */
+.sp-loading,
+.sp-notice {
+	display: flex;
+	align-items: center;
+	gap: 7px;
+	padding: 10px 4px;
+	font-size: 12px;
+	color: var(--text-muted);
+}
+
+.sp-notice-icon,
+.sp-loading .sp-spin {
+	display: inline-flex;
+	flex-shrink: 0;
+}
+
+.sp-notice-icon svg,
+.sp-loading svg {
+	width: 15px;
+	height: 15px;
+}
+
+.sp-notice-error {
+	align-items: flex-start;
+	color: var(--text-error);
+}
+
+.sp-notice-error .sp-notice-icon {
+	color: var(--text-error);
+	margin-top: 1px;
+}
+
+/* —— 失败后的操作按钮（重试 / 打开设置）—— */
+.sp-error-action {
+	margin-top: 8px;
+}
+
+.sp-retry {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	cursor: pointer;
+}
+
+.sp-retry-icon {
+	display: inline-flex;
+}
+
+.sp-retry-icon svg {
+	width: 14px;
+	height: 14px;
+}
+
+.sp-spin {
+	color: var(--text-accent);
+	animation: sp-spin 0.9s linear infinite;
+}
+
+@keyframes sp-spin {
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+.sp-empty {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	text-align: center;
+	padding: 26px 16px;
+	gap: 6px;
+}
+
+.sp-empty-icon {
+	display: inline-flex;
+	color: var(--text-faint);
+	margin-bottom: 2px;
+}
+
+.sp-empty-icon svg {
+	width: 30px;
+	height: 30px;
+}
+
+.sp-empty-title {
+	font-size: 13px;
+	font-weight: 600;
+	color: var(--text-normal);
+}
+
+.sp-empty-desc {
+	font-size: 11px;
+	line-height: 1.5;
+	color: var(--text-muted);
+	max-width: 240px;
+}
+
+/* —— 手动输入 —— */
+.sp-manual {
+	/* 用一条分隔线把「粘贴链接」这行和下面的任务卡片分开，避免糊成一坨 */
+	padding: 0 0 10px;
+	border-bottom: 1px solid var(--background-modifier-border);
+}
+
+/* 任务卡片空闲隐藏时，不要留一条悬空的分隔线 */
+.sp-manual:has(+ .sp-task-card.sp-hidden) {
+	padding-bottom: 0;
+	border-bottom: none;
+}
+
+.sp-manual-summary {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	font-size: 12px;
+	color: var(--text-muted);
+	cursor: pointer;
+	list-style: none;
+	user-select: none;
+}
+
+.sp-manual-summary::-webkit-details-marker {
+	display: none;
+}
+
+.sp-manual-summary:hover {
+	color: var(--text-normal);
+}
+
+.sp-manual-caret {
+	display: inline-flex;
+	transition: transform 0.15s ease;
+}
+
+.sp-manual-caret svg {
+	width: 14px;
+	height: 14px;
+}
+
+.sp-manual[open] .sp-manual-caret {
+	transform: rotate(90deg);
+}
+
+.sp-textarea {
+	width: 100%;
+	margin-top: 8px;
+	resize: vertical;
+	font-family: var(--font-monospace);
+	font-size: 12px;
+	line-height: 1.5;
+}
+
+.sp-start {
+	width: 100%;
+	margin-top: 8px;
+	cursor: pointer;
+}
+
+/* —— 任务卡片 —— */
+.sp-task-card {
+	border: 1px solid var(--background-modifier-border);
+	border-radius: 10px;
+	padding: 12px;
+	background: var(--background-secondary);
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+
+.sp-task-card[data-status="done"] {
+	border-color: var(--color-green);
+}
+
+.sp-task-card[data-status="error"] {
+	border-color: var(--color-red);
+}
+
+.sp-task-head {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.sp-status-dot {
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	flex-shrink: 0;
+	background: var(--text-muted);
+}
+
+.sp-task-card[data-status="running"] .sp-status-dot {
+	background: var(--color-yellow);
+	animation: sp-pulse 1.3s ease-in-out infinite;
+}
+
+.sp-task-card[data-status="done"] .sp-status-dot {
+	background: var(--color-green);
+}
+
+.sp-task-card[data-status="error"] .sp-status-dot {
+	background: var(--color-red);
+}
+
+.sp-task-card[data-status="cancelled"] .sp-status-dot {
+	background: var(--text-faint);
+}
+
+@keyframes sp-pulse {
+	0%,
+	100% {
+		box-shadow: 0 0 0 0 rgba(var(--color-yellow-rgb, 224, 172, 0), 0.5);
+	}
+	50% {
+		box-shadow: 0 0 0 4px rgba(var(--color-yellow-rgb, 224, 172, 0), 0);
+	}
+}
+
+.sp-status-text {
+	font-size: 13px;
+	font-weight: 600;
+	color: var(--text-normal);
+}
+
+.sp-elapsed {
+	font-size: 11px;
+	color: var(--text-muted);
+	font-variant-numeric: tabular-nums;
+}
+
+.sp-cancel {
+	margin-left: auto;
+	padding: 2px 10px;
+	font-size: 12px;
+	cursor: pointer;
+}
+
+/* 不定量进度条 */
+.sp-progress {
+	height: 3px;
+	border-radius: 3px;
+	background: var(--background-modifier-border);
+	overflow: hidden;
+}
+
+.sp-progress-bar {
+	width: 40%;
+	height: 100%;
+	border-radius: 3px;
+	background: var(--interactive-accent);
+	animation: sp-indeterminate 1.4s ease-in-out infinite;
+}
+
+@keyframes sp-indeterminate {
+	0% {
+		transform: translateX(-120%);
+	}
+	100% {
+		transform: translateX(320%);
+	}
+}
+
+/* 运行时实时状态行 */
+.sp-live-line {
+	font-size: 11px;
+	line-height: 1.4;
+	color: var(--text-muted);
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+/* 处理中的输入清单 */
+.sp-inputs-box {
+	border-radius: 8px;
+	background: var(--background-primary);
+	padding: 8px 10px;
+}
+
+.sp-inputs-head {
+	font-size: 11px;
+	font-weight: 600;
+	color: var(--text-muted);
+	margin-bottom: 4px;
+}
+
+.sp-input-item {
+	font-size: 11px;
+	color: var(--text-normal);
+	word-break: break-all;
+	line-height: 1.5;
+	padding-left: 10px;
+	position: relative;
+}
+
+.sp-input-item::before {
+	content: "";
+	position: absolute;
+	left: 2px;
+	top: 8px;
+	width: 3px;
+	height: 3px;
+	border-radius: 50%;
+	background: var(--text-faint);
+}
+
+/* —— 日志（折叠）—— */
+.sp-log-details {
+	border-radius: 8px;
+}
+
+.sp-log-summary {
+	font-size: 11px;
+	color: var(--text-muted);
+	cursor: pointer;
+	user-select: none;
+	padding: 2px 0;
+}
+
+.sp-log-summary:hover {
+	color: var(--text-normal);
+}
+
+.sp-log {
+	max-height: 200px;
+	overflow-y: auto;
+	margin-top: 6px;
+	background: var(--background-primary);
+	border-radius: 8px;
+	padding: 8px 10px;
+	font-family: var(--font-monospace);
+	font-size: 11px;
+	line-height: 1.55;
+}
+
+.sp-log-line {
+	white-space: pre-wrap;
+	word-break: break-all;
+	color: var(--text-muted);
+}
+
+/* —— 生成的笔记 —— */
+.sp-results-head {
+	font-size: 11px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+	color: var(--text-muted);
+}
+
+.sp-result-link {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin-top: 6px;
+	padding: 9px 10px;
+	border-radius: 8px;
+	background: var(--background-primary);
+	border: 1px solid var(--background-modifier-border);
+	cursor: pointer;
+	text-decoration: none;
+	transition: border-color 0.12s ease, background 0.12s ease;
+}
+
+.sp-result-link:hover {
+	border-color: var(--interactive-accent);
+	background: var(--background-modifier-hover);
+}
+
+.sp-result-icon {
+	display: inline-flex;
+	color: var(--text-accent);
+	flex-shrink: 0;
+}
+
+.sp-result-icon svg {
+	width: 16px;
+	height: 16px;
+}
+
+.sp-result-name {
+	flex: 1;
+	min-width: 0;
+	font-size: 12px;
+	color: var(--text-normal);
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.sp-result-open {
+	display: inline-flex;
+	color: var(--text-faint);
+	flex-shrink: 0;
+}
+
+.sp-result-open svg {
+	width: 14px;
+	height: 14px;
+}
+
+.sp-hidden {
+	display: none !important;
+}
+
+/* ===== 设置页 · 独立环境与依赖状态看板 ===== */
+.sp-env-card {
+	background: var(--background-secondary);
+	border: 1px solid var(--background-modifier-border);
+	border-radius: 8px;
+	padding: 12px;
+	margin: 10px 0 16px;
+}
+
+.sp-env-hero {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	padding: 10px 12px;
+	border-radius: 6px;
+	border: 1px solid transparent;
+}
+
+.sp-env-hero-ok {
+	background: rgba(var(--color-green-rgb), 0.08);
+	border-color: rgba(var(--color-green-rgb), 0.25);
+}
+
+.sp-env-hero-warn {
+	background: rgba(var(--color-yellow-rgb), 0.08);
+	border-color: rgba(var(--color-yellow-rgb), 0.25);
+}
+
+.sp-env-hero-error {
+	background: rgba(var(--color-red-rgb), 0.08);
+	border-color: rgba(var(--color-red-rgb), 0.25);
+}
+
+.sp-env-hero-icon {
+	font-size: 20px;
+	line-height: 1;
+	flex-shrink: 0;
+}
+
+.sp-env-hero-content {
+	flex: 1;
+	min-width: 0;
+}
+
+.sp-env-hero-title {
+	font-size: 13px;
+	font-weight: 600;
+	color: var(--text-normal);
+}
+
+.sp-env-hero-desc {
+	font-size: 11px;
+	color: var(--text-muted);
+	margin-top: 2px;
+}
+
+.sp-env-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+	gap: 8px;
+	margin-top: 10px;
+}
+
+.sp-env-item {
+	background: var(--background-primary);
+	border: 1px solid var(--background-modifier-border);
+	border-radius: 6px;
+	padding: 8px 10px;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: 8px;
+	font-size: 12px;
+}
+
+.sp-env-item-label {
+	color: var(--text-normal);
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	min-width: 0;
+}
+
+.sp-env-item-badge {
+	font-size: 11px;
+	padding: 2px 6px;
+	border-radius: 4px;
+	font-weight: 500;
+	white-space: nowrap;
+	flex-shrink: 0;
+}
+
+.sp-badge-ok {
+	background: rgba(var(--color-green-rgb), 0.12);
+	color: var(--color-green);
+}
+
+.sp-badge-fail {
+	background: rgba(var(--color-red-rgb), 0.12);
+	color: var(--color-red);
+}
+
+.sp-badge-warn {
+	background: rgba(var(--color-yellow-rgb), 0.12);
+	color: var(--color-yellow);
+}
+
+.sp-env-details {
+	margin-top: 10px;
+	border-top: 1px solid var(--background-modifier-border);
+	padding-top: 8px;
+}
+
+.sp-env-details summary {
+	font-size: 11px;
+	color: var(--text-muted);
+	cursor: pointer;
+	user-select: none;
+	padding: 2px 0;
+}
+
+.sp-env-details summary:hover {
+	color: var(--text-normal);
+}
+
+.sp-env-log-view {
+	max-height: 180px;
+	overflow-y: auto;
+	background: var(--background-primary);
+	border-radius: 6px;
+	border: 1px solid var(--background-modifier-border);
+	padding: 8px 10px;
+	font-family: var(--font-monospace);
+	font-size: 11px;
+	line-height: 1.5;
+	color: var(--text-muted);
+	white-space: pre-wrap;
+	word-break: break-all;
+	margin-top: 6px;
+}
+
+
+/* ===== 我的播客 / 关注 ===== */
+
+.sp-home {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
+
+/* 下钻页标题行：播客名 + 关注按钮 */
+.sp-drill-head {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin: 8px 2px 6px;
+}
+
+.sp-drill-name {
+	flex: 1;
+	min-width: 0;
+	font-size: 14px;
+	font-weight: 600;
+	color: var(--text-normal);
+	line-height: 1.3;
+	word-break: break-word;
+}
+
+/* 关注 / 已关注 主按钮 */
+.sp-follow-btn {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	flex-shrink: 0;
+	padding: 4px 10px;
+	font-size: 12px;
+	font-weight: 600;
+	border-radius: 14px;
+	cursor: pointer;
+	background: var(--interactive-accent);
+	color: var(--text-on-accent);
+	border: 1px solid transparent;
+	transition: background 0.12s ease, color 0.12s ease, border-color 0.12s ease;
+}
+
+.sp-follow-btn:hover {
+	background: var(--interactive-accent-hover);
+}
+
+.sp-follow-btn.is-followed {
+	background: transparent;
+	color: var(--text-muted);
+	border-color: var(--background-modifier-border);
+}
+
+.sp-follow-btn.is-followed:hover {
+	color: var(--text-error);
+	border-color: var(--text-error);
+}
+
+.sp-follow-icon {
+	display: inline-flex;
+}
+
+.sp-follow-icon svg {
+	width: 13px;
+	height: 13px;
+}
+
+/* 列表项右侧星标：未关注低调描边，已关注高亮填充 */
+.sp-item-star {
+	opacity: 0.45;
+	color: var(--text-muted);
+}
+
+.sp-item-star:hover {
+	opacity: 1;
+	color: var(--text-accent);
+}
+
+.sp-item-star.is-followed {
+	opacity: 1;
+	color: var(--color-yellow, var(--text-accent));
+}
+
+.sp-item-star.is-followed svg {
+	fill: currentColor;
+}
+
+/* ===== 单集详情介绍页 (Show Notes) ===== */
+
+.sp-ep-detail {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	animation: spFadeIn 0.15s ease-out;
+	/* Obsidian 界面外壳默认 user-select: none，这里显式放开，
+	   让标题、节目介绍等文字能被鼠标划选（方便 Bob 划词翻译）。 */
+	-webkit-user-select: text;
+	user-select: text;
+}
+
+@keyframes spFadeIn {
+	from {
+		opacity: 0;
+		transform: translateY(3px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+.sp-ep-header {
+	display: flex;
+	gap: 10px;
+	padding: 8px 10px;
+	background: var(--background-primary);
+	border: 1px solid var(--background-modifier-border);
+	border-radius: 8px;
+	align-items: flex-start;
+}
+
+.sp-ep-art {
+	width: 68px;
+	height: 68px;
+	border-radius: 6px;
+	object-fit: cover;
+	flex-shrink: 0;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.sp-ep-art-ph {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: var(--background-secondary);
+	color: var(--text-faint);
+}
+
+.sp-ep-art-ph svg {
+	width: 24px;
+	height: 24px;
+}
+
+.sp-ep-info {
+	flex: 1;
+	min-width: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 3px;
+}
+
+.sp-ep-pod-row {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	font-size: 11px;
+	color: var(--text-muted);
+}
+
+.sp-ep-pod-icon svg {
+	width: 12px;
+	height: 12px;
+	color: var(--text-accent);
+}
+
+.sp-ep-pod-name {
+	font-weight: 500;
+	cursor: pointer;
+	transition: color 0.12s ease;
+}
+
+.sp-ep-pod-name:hover {
+	color: var(--interactive-accent);
+	text-decoration: underline;
+}
+
+.sp-ep-title {
+	font-size: 13px;
+	font-weight: 600;
+	color: var(--text-normal);
+	line-height: 1.4;
+	word-break: break-word;
+}
+
+.sp-ep-meta {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 6px;
+	font-size: 11px;
+	color: var(--text-faint);
+	margin-top: 2px;
+}
+
+.sp-ep-tag-fast {
+	display: inline-block;
+	padding: 1px 5px;
+	border-radius: 3px;
+	background: rgba(var(--color-green-rgb), 0.12);
+	color: var(--color-green);
+	font-weight: 600;
+	font-size: 10px;
+}
+
+.sp-ep-actions {
+	display: flex;
+	gap: 8px;
+}
+
+.sp-ep-fetch-btn {
+	width: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 6px;
+	padding: 8px 14px;
+	font-size: 12px;
+	font-weight: 600;
+	border-radius: 6px;
+}
+
+.sp-ep-fetch-icon svg {
+	width: 14px;
+	height: 14px;
+}
+
+.sp-ep-desc-section {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+}
+
+.sp-ep-desc {
+	background: var(--background-primary);
+	border: 1px solid var(--background-modifier-border);
+	border-radius: 8px;
+	padding: 10px 12px;
+	max-height: 320px;
+	overflow-y: auto;
+	font-size: 12px;
+	line-height: 1.6;
+	color: var(--text-muted);
+}
+
+.sp-ep-para {
+	margin: 0 0 8px 0;
+	word-break: break-word;
+}
+
+.sp-ep-para:last-child {
+	margin-bottom: 0;
+}
+
+.sp-ep-desc-empty {
+	padding: 16px 8px;
+	text-align: center;
+	color: var(--text-faint);
+	font-size: 12px;
+}
+

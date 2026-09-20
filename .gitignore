@@ -1,0 +1,18 @@
+# build artifacts（main.js 提交进仓库，方便用户直接复制安装；仅忽略 sourcemap）
+*.js.map
+
+# npm
+node_modules/
+
+# python
+__pycache__/
+*.pyc
+
+# obsidian test vault symlink target
+data.json
+
+# 内部开发交接文档，不公开
+HANDOFF.md
+
+# os
+.DS_Store
