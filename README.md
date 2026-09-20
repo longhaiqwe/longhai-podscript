@@ -29,6 +29,8 @@
 |---|---|
 | ![单集](docs/images/04-episode.png) | ![抓取](docs/images/05-fetching.png) |
 | 看节目介绍，点「获取文字稿」 | 实时进度 + 运行日志，可随时取消 |
+| | ![完成](docs/images/06-done.png) |
+| | 完成：日志给出抓取途径，直接生成文字稿笔记 |
 
 ## 安装
 
