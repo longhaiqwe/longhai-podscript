@@ -42,13 +42,20 @@
 
 **第 2 步：装插件**
 
-把 `main.js`、`manifest.json`、`styles.css` 和 `scripts/` 文件夹放进你的库目录：
+最省事的方式——直接把仓库 clone 进你库里的插件目录（文件夹名正好就是插件 id，Obsidian 能直接认）：
 
-```
-<你的库>/.obsidian/plugins/longhai-podscript/
+```bash
+cd "<你的库>/.obsidian/plugins"
+git clone https://github.com/longhaiqwe/longhai-podscript.git
 ```
 
-然后在 Obsidian 的「设置 → 第三方插件」里启用它。
+> 把 `<你的库>` 换成你的 Obsidian 库的实际路径。`.obsidian` 是隐藏文件夹，若 `plugins` 目录不存在，先 `mkdir -p "<你的库>/.obsidian/plugins"`。
+
+不想用命令行也行：在仓库页点 **Code → Download ZIP**，解压后把文件夹**重命名为 `longhai-podscript`**（去掉 `-main` 后缀），放进 `<你的库>/.obsidian/plugins/` 下。
+
+装好后：打开 Obsidian →「设置 → 第三方插件」→ 关掉「安全模式」→ 刷新列表 → 启用 **Longhai Podscript**。（装完看不到就重启一下 Obsidian。）
+
+> 想更新到新版本：进插件目录 `git pull` 后，在 Obsidian 里禁用再重新启用一次即可。
 
 **第 3 步：首次准备环境（自动）**
 
@@ -58,6 +65,22 @@
 - 往里面装好 `yt-dlp` 和 `faster-whisper`。
 
 这些都装在你的库外面，**不会污染系统 Python，也不会被库同步和插件更新弄乱**。国内网络慢的话，可以在设置里填 pip 镜像源（如清华源 `https://pypi.tuna.tsinghua.edu.cn/simple`）加速。
+
+### 懒人法：让 AI 助手帮你装
+
+如果你在用 Claude Code / Cursor 之类能跑命令的 AI 助手，把下面这段直接发给它，它会自动帮你装好：
+
+```text
+帮我在 Obsidian 里安装 Longhai Podscript 插件，仓库地址是
+https://github.com/longhaiqwe/longhai-podscript 。请按以下步骤做，遇到不确定的先问我：
+
+1. 先问我 Obsidian 库（vault）的绝对路径。
+2. 在该库的 .obsidian/plugins/ 目录下 git clone 这个仓库（目录不存在就先创建）；
+   如果已经存在同名文件夹，改为进去 git pull 更新。
+3. 检查本机是否装了 Python 3.9+（运行 python3 --version）。没有的话告诉我怎么装，别擅自装。
+4. 装完提醒我：打开 Obsidian →「设置 → 第三方插件」→ 关闭安全模式 → 启用
+   Longhai Podscript；首次抓取会自动在 ~/.longhai-podscript/venv 里装 Python 依赖。
+```
 
 ## 怎么用
 
