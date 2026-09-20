@@ -10,6 +10,14 @@
 
 抓完的文字稿是后续「脱水改稿、翻译、发布」的起点。
 
+## In English
+
+**Longhai Podscript** fetches full podcast transcripts inside Obsidian and saves them as structured notes. Give it a YouTube link, an Apple Podcasts page, a direct audio URL, or just a title keyword: it reuses existing captions when available (instant), and otherwise transcribes the audio locally with [`faster-whisper`](https://github.com/SYSTRAN/faster-whisper) — free, offline, and without any paid API.
+
+**Desktop only.** The plugin runs a local Python helper, so it needs Python 3.9+ on your machine. On first use it shows a consent dialog, then creates an isolated virtual environment under `~/.longhai-podscript` (outside your vault) and installs `yt-dlp` and `faster-whisper` there. Nothing is uploaded; everything runs locally. Each transcript is saved as a note whose front matter records the source, quality, and date, ready for further editing, translation, or publishing.
+
+See the Chinese sections below for detailed installation and usage instructions.
+
 ---
 
 ## 能做什么

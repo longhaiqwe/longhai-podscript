@@ -84,7 +84,7 @@ export default class LonghaiPodscriptPlugin extends Plugin {
 			await leaf?.setViewState({ type: VIEW_TYPE_LONGHAI_PODSCRIPT, active: true });
 		}
 		if (leaf) {
-			workspace.revealLeaf(leaf);
+			await workspace.revealLeaf(leaf);
 			const view = leaf.view;
 			if (view instanceof LonghaiPodscriptPanel) view.focusInput();
 		}

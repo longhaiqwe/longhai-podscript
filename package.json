@@ -1,6 +1,6 @@
 {
 	"name": "longhai-podscript",
-	"version": "0.7.0",
+	"version": "0.7.1",
 	"description": "Fetch podcast transcripts inside Obsidian and turn them into structured notes.",
 	"main": "main.js",
 	"scripts": {

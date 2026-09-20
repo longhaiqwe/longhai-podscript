@@ -694,7 +694,7 @@ export class LonghaiPodscriptPanel extends ItemView {
 				link.onclick = (e) => {
 					e.preventDefault();
 					const file = this.plugin.app.vault.getAbstractFileByPath(r.path);
-					if (file instanceof TFile) this.plugin.app.workspace.getLeaf(true).openFile(file);
+					if (file instanceof TFile) void this.plugin.app.workspace.getLeaf(true).openFile(file);
 				};
 			}
 		}

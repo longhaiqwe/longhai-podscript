@@ -123,7 +123,7 @@ export function runTranscript(opts: RunOptions): RunHandle {
 		try {
 			child = spawn(opts.pythonPath, args, { env, windowsHide: true });
 		} catch (e) {
-			reject(e);
+			reject(e instanceof Error ? e : new Error(String(e)));
 			return;
 		}
 
@@ -179,7 +179,7 @@ export function runTranscript(opts: RunOptions): RunHandle {
 		child.stderr?.on("data", (chunk) => {
 			stderr += chunk.toString();
 		});
-		child.on("error", (e) => reject(e));
+		child.on("error", (e) => reject(e instanceof Error ? e : new Error(String(e))));
 		child.on("close", (code) => {
 			if (stdoutBuffer) handleLine(stdoutBuffer);
 			if (cancelled) {

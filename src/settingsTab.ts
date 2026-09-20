@@ -1,7 +1,7 @@
 import { App, PluginSettingTab, Setting, Notice } from "obsidian";
 import type LonghaiPodscriptPlugin from "./main";
 import { resolveScriptPath } from "./runner";
-import { getVenvPaths, runEnvDoctor, ensureEnvReady, type DoctorReport } from "./env";
+import { runEnvDoctor, ensureEnvReady, type DoctorReport } from "./env";
 
 export class LonghaiPodscriptSettingTab extends PluginSettingTab {
 	private readonly plugin: LonghaiPodscriptPlugin;
@@ -16,7 +16,6 @@ export class LonghaiPodscriptSettingTab extends PluginSettingTab {
 		containerEl.empty();
 
 		const resolved = resolveScriptPath(this.plugin.settings.scriptPath);
-		const venvPaths = getVenvPaths();
 
 		new Setting(containerEl)
 			.setName("系统 Python 解释器")
@@ -81,7 +80,7 @@ export class LonghaiPodscriptSettingTab extends PluginSettingTab {
 			);
 
 		// 隔离环境与依赖管理区域
-		containerEl.createEl("h3", { text: "独立虚拟环境与依赖状态" });
+		new Setting(containerEl).setName("独立虚拟环境与依赖状态").setHeading();
 		const envDescEl = containerEl.createDiv({ cls: "setting-item-description sp-env-intro" });
 		envDescEl.setText("插件自管独立的 Python 虚拟环境（位于 ~/.longhai-podscript），依赖与模型缓存完全隔离，不污染系统全局环境。");
 
