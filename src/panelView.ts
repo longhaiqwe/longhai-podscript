@@ -674,7 +674,6 @@ export class LonghaiPodscriptPanel extends ItemView {
 				task.errorText.includes("venv")
 			) {
 				const guide = this.taskResultEl.createDiv({ cls: "sp-error-action" });
-				guide.style.marginTop = "8px";
 				const btn = guide.createEl("button", { text: "打开插件设置检查 / 修复环境", cls: "mod-cta" });
 				btn.onclick = () => {
 					const setting = (this.plugin.app as unknown as { setting?: { open: () => void; openTabById?: (id: string) => void } }).setting;

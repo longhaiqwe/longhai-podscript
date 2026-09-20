@@ -1,4 +1,4 @@
-import { FileSystemAdapter, Notice, Platform, Plugin, TFile, WorkspaceLeaf } from "obsidian";
+import { Notice, Platform, Plugin, TFile, WorkspaceLeaf } from "obsidian";
 import { mkdtempSync, rmSync } from "fs";
 import { tmpdir } from "os";
 import { join } from "path";
@@ -6,7 +6,8 @@ import { DEFAULT_SETTINGS, LonghaiPodscriptSettings, AsrModel, FollowedPodcast }
 import type { PodcastResult } from "./search";
 import { LonghaiPodscriptSettingTab } from "./settingsTab";
 import { resolveScriptPath, runTranscript, RunHandle, RunResult } from "./runner";
-import { ensureEnvReady } from "./env";
+import { ensureEnvReady, isEnvReady } from "./env";
+import { confirmDepsConsent } from "./consentModal";
 import { importTranscripts, NoteOverride } from "./note";
 import {
 	LonghaiPodscriptPanel,
@@ -75,20 +76,6 @@ export default class LonghaiPodscriptPlugin extends Plugin {
 		this.activeRun = null;
 	}
 
-	getPluginDir(): string {
-		const adapter = this.app.vault.adapter;
-		let vaultPath = "";
-		if (adapter instanceof FileSystemAdapter) {
-			vaultPath = adapter.getBasePath();
-		} else if (adapter && "basePath" in adapter) {
-			vaultPath = String((adapter as { basePath?: unknown }).basePath || "");
-		}
-		const manifestDir =
-			(this.manifest as unknown as { dir?: string }).dir ||
-			join(this.app.vault.configDir, "plugins", this.manifest.id);
-		return vaultPath ? join(vaultPath, manifestDir) : "";
-	}
-
 	async activatePanel(): Promise<void> {
 		const { workspace } = this.app;
 		let leaf: WorkspaceLeaf | null = workspace.getLeavesOfType(VIEW_TYPE_LONGHAI_PODSCRIPT)[0] ?? null;
@@ -155,15 +142,24 @@ export default class LonghaiPodscriptPlugin extends Plugin {
 		override?: NoteOverride,
 		fallback?: string,
 	): Promise<void> {
-		const pluginDir = this.getPluginDir();
-		const scriptPath = resolveScriptPath(this.settings.scriptPath, pluginDir);
-		if (!scriptPath) {
-			new Notice(
-				"未找到转写脚本 podcast_transcript_txt.py。\n请确保插件文件完整，或在设置中手动指定脚本路径。",
-				12000,
-			);
-			return;
+		// 首次需要联网准备本地转写环境时，先明确征得用户同意（已就绪的老用户无需再问）。
+		if (!this.settings.depsConsent) {
+			const alreadyReady = await isEnvReady();
+			if (alreadyReady) {
+				this.settings.depsConsent = true;
+				await this.saveSettings();
+			} else {
+				const agreed = await confirmDepsConsent(this.app);
+				if (!agreed) {
+					new Notice("已取消：需要你确认后，插件才会联网准备本地转写环境。", 8000);
+					return;
+				}
+				this.settings.depsConsent = true;
+				await this.saveSettings();
+			}
 		}
+
+		const scriptPath = resolveScriptPath(this.settings.scriptPath);
 
 		let outDir: string;
 		try {

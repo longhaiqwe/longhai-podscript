@@ -15,8 +15,7 @@ export class LonghaiPodscriptSettingTab extends PluginSettingTab {
 		const { containerEl } = this;
 		containerEl.empty();
 
-		const pluginDir = this.plugin.getPluginDir();
-		const resolved = resolveScriptPath(this.plugin.settings.scriptPath, pluginDir);
+		const resolved = resolveScriptPath(this.plugin.settings.scriptPath);
 		const venvPaths = getVenvPaths();
 
 		new Setting(containerEl)
@@ -83,8 +82,7 @@ export class LonghaiPodscriptSettingTab extends PluginSettingTab {
 
 		// 隔离环境与依赖管理区域
 		containerEl.createEl("h3", { text: "独立虚拟环境与依赖状态" });
-		const envDescEl = containerEl.createDiv({ cls: "setting-item-description" });
-		envDescEl.style.marginBottom = "8px";
+		const envDescEl = containerEl.createDiv({ cls: "setting-item-description sp-env-intro" });
 		envDescEl.setText("插件自管独立的 Python 虚拟环境（位于 ~/.longhai-podscript），依赖与模型缓存完全隔离，不污染系统全局环境。");
 
 		// 结构化状态看板容器
@@ -129,6 +127,11 @@ export class LonghaiPodscriptSettingTab extends PluginSettingTab {
 					.setButtonText("安装 / 修复依赖")
 					.setCta()
 					.onClick(async () => {
+						// 用户主动点击安装，即视为明确同意联网准备环境，后续获取不再弹窗。
+						if (!this.plugin.settings.depsConsent) {
+							this.plugin.settings.depsConsent = true;
+							await this.plugin.saveSettings();
+						}
 						btn.setDisabled(true).setButtonText("准备环境中…");
 						installLog = "开始准备隔离虚拟环境并安装核心依赖…\n";
 						renderCard("正在配置虚拟环境并下载依赖（yt-dlp, faster-whisper）…", true);

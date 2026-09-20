@@ -355,6 +355,17 @@ export function installDeps(
 	});
 }
 
+/**
+ * 只读地快速判断隔离环境与依赖是否已经就绪，不触发任何安装或下载。
+ * 用于决定是否需要向用户弹出首次联网同意窗（已就绪的老用户无需再问）。
+ */
+export async function isEnvReady(): Promise<boolean> {
+	const paths = getVenvPaths();
+	if (!existsSync(paths.python)) return false;
+	const dep = await checkDeps(paths.python);
+	return dep.ok;
+}
+
 export interface ReadyEnvResult {
 	ok: boolean;
 	error?: string;

@@ -752,6 +752,10 @@
 }
 
 /* ===== 设置页 · 独立环境与依赖状态看板 ===== */
+.sp-env-intro {
+	margin-bottom: 8px;
+}
+
 .sp-env-card {
 	background: var(--background-secondary);
 	border: 1px solid var(--background-modifier-border);

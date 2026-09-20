@@ -42,22 +42,30 @@
 - **Windows**：去 [Python 官网](https://www.python.org/downloads/) 下安装包，**安装时务必勾选「Add python.exe to PATH」**；或在 Microsoft Store 搜 Python 3.11/3.12 装。
 - **Linux**：`sudo apt install python3 python3-venv python3-pip`。
 
-**第 2 步：装插件**
+**第 2 步：装插件**（任选一种，从上往下越省事）
 
-最省事的方式——直接把仓库 clone 进你库里的插件目录（文件夹名正好就是插件 id，Obsidian 能直接认）：
+**方式 A · 社区插件市场（上架后推荐）**
+
+> 目前正在提交官方审核，审核通过后即可用这种方式一键安装、自动更新。
+
+打开 Obsidian →「设置 → 第三方插件」→ 关掉安全模式 → 点「浏览」→ 搜 **Longhai Podscript** → 安装 → 启用。
+
+**方式 B · BRAT（想抢先用、且能自动更新）**
+
+先装社区插件 [BRAT](https://github.com/TfTHacker/obsidian42-brat)，在它的设置里点「Add Beta plugin」，填入本仓库地址 `https://github.com/longhaiqwe/longhai-podscript`，BRAT 会自动帮你装好并跟随新版本更新。
+
+**方式 C · 手动安装（兜底）**
+
+在仓库 [Releases](https://github.com/longhaiqwe/longhai-podscript/releases) 页下载 `main.js`、`manifest.json`、`styles.css` 三个文件，放进 `<你的库>/.obsidian/plugins/longhai-podscript/` 目录（没有就新建）。
+
+也可以直接 clone 整个仓库进去：
 
 ```bash
 cd "<你的库>/.obsidian/plugins"
 git clone https://github.com/longhaiqwe/longhai-podscript.git
 ```
 
-> 把 `<你的库>` 换成你的 Obsidian 库的实际路径。`.obsidian` 是隐藏文件夹，若 `plugins` 目录不存在，先 `mkdir -p "<你的库>/.obsidian/plugins"`。
-
-不想用命令行也行：在仓库页点 **Code → Download ZIP**，解压后把文件夹**重命名为 `longhai-podscript`**（去掉 `-main` 后缀），放进 `<你的库>/.obsidian/plugins/` 下。
-
-装好后：打开 Obsidian →「设置 → 第三方插件」→ 关掉「安全模式」→ 刷新列表 → 启用 **Longhai Podscript**。（装完看不到就重启一下 Obsidian。）
-
-> 想更新到新版本：进插件目录 `git pull` 后，在 Obsidian 里禁用再重新启用一次即可。
+> 把 `<你的库>` 换成你的 Obsidian 库的实际路径。`.obsidian` 是隐藏文件夹，若 `plugins` 目录不存在，先 `mkdir -p "<你的库>/.obsidian/plugins"`。手动安装后：打开 Obsidian →「设置 → 第三方插件」→ 关掉安全模式 → 刷新列表 → 启用 **Longhai Podscript**（装完看不到就重启一下 Obsidian）。用 git clone 装的，之后进插件目录 `git pull` 再禁用/启用一次即可更新。
 
 **第 3 步：首次准备环境（自动）**
 

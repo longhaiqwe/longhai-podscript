@@ -24,6 +24,8 @@ export interface LonghaiPodscriptSettings {
 	openAfterCreate: boolean;
 	/** 我的播客：用户关注的固定几档，首页直接列出。 */
 	followedPodcasts: FollowedPodcast[];
+	/** 用户是否已同意「联网准备本地转写环境」（首次会弹窗征询，同意后不再重复问）。 */
+	depsConsent: boolean;
 }
 
 export const DEFAULT_SETTINGS: LonghaiPodscriptSettings = {
@@ -34,5 +36,6 @@ export const DEFAULT_SETTINGS: LonghaiPodscriptSettings = {
 	asrModel: "small",
 	openAfterCreate: true,
 	followedPodcasts: [],
+	depsConsent: false,
 };
 

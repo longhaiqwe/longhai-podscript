@@ -1,8 +1,8 @@
 import { spawn, ChildProcess } from "child_process";
 import { existsSync, readdirSync, readFileSync } from "fs";
-import { homedir } from "os";
 import { join } from "path";
 import type { AsrModel } from "./settings";
+import { ensureBundledScript } from "./script";
 
 export interface TranscriptMeta {
 	title?: string;
@@ -35,44 +35,17 @@ export interface RunResult {
 	lastLine: string;
 }
 
-import { MODELS_DIR, getVenvPaths } from "./env";
+import { MODELS_DIR } from "./env";
 
-// 自动探测历史已安装的 skill（兼容旧用户配置或未完全打包环境）。
-const CANDIDATE_SCRIPTS = [
-	".agents/skills/podcast-transcript-txt/scripts/podcast_transcript_txt.py",
-	".codex/skills/podcast-transcript-txt/scripts/podcast_transcript_txt.py",
-	".claude/skills/podcast-transcript-txt/scripts/podcast_transcript_txt.py",
-];
-
-export function resolveScriptPath(configured?: string, pluginDir?: string): string | null {
-	// 1. 用户显式指定的路径优先
+/**
+ * 定位转写脚本：优先用用户在设置里显式指定的路径；否则把插件内置脚本释放到本地数据目录并使用。
+ * 内置脚本随 main.js 一起分发，因此商店安装也总能拿到，返回值恒为有效路径。
+ */
+export function resolveScriptPath(configured?: string): string {
 	if (configured && configured.trim() && existsSync(configured.trim())) {
 		return configured.trim();
 	}
-
-	// 2. 优先使用插件自身目录下的自带脚本
-	if (pluginDir && pluginDir.trim()) {
-		const vendored = join(pluginDir.trim(), "scripts", "podcast_transcript_txt.py");
-		if (existsSync(vendored)) return vendored;
-		// 某些分发包可能平铺在插件根目录
-		const flatVendored = join(pluginDir.trim(), "podcast_transcript_txt.py");
-		if (existsSync(flatVendored)) return flatVendored;
-	}
-
-	// 3. 尝试当前工作区或进程目录（开发模式）
-	try {
-		const local = join(process.cwd(), "scripts", "podcast_transcript_txt.py");
-		if (existsSync(local)) return local;
-	} catch {
-		// 忽略
-	}
-
-	// 4. 历史兼容器目录探测
-	for (const rel of CANDIDATE_SCRIPTS) {
-		const abs = join(homedir(), rel);
-		if (existsSync(abs)) return abs;
-	}
-	return null;
+	return ensureBundledScript();
 }
 
 export interface DoctorResult {

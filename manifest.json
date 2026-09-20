@@ -3,7 +3,7 @@
 	"name": "Longhai Podscript",
 	"version": "0.7.0",
 	"minAppVersion": "1.4.0",
-	"description": "在 Obsidian 内一键获取播客文字稿（YouTube / 小宇宙 / Apple / 纯音频），保存为结构化笔记，供后续改稿和发布。",
+	"description": "Fetch full podcast transcripts (YouTube, Apple Podcasts, audio links, or a title) — reuse existing captions or transcribe audio locally with Whisper — and save them as structured notes.",
 	"author": "龙海",
 	"isDesktopOnly": true
 }

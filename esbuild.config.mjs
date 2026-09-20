@@ -36,6 +36,11 @@ const context = await esbuild.context({
 	],
 	format: "cjs",
 	target: "es2018",
+	// 把转写脚本 podcast_transcript_txt.py 作为文本内联进 main.js，
+	// 这样官方商店只下载 main.js 也能在运行时把脚本释放到本地使用。
+	loader: {
+		".py": "text",
+	},
 	logLevel: "info",
 	sourcemap: prod ? false : "inline",
 	treeShaking: true,
