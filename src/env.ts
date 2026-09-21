@@ -9,6 +9,21 @@ export const MODELS_DIR = join(LONGHAI_PODSCRIPT_HOME, "models");
 
 const isWin = platform() === "win32";
 
+/**
+ * 强制子进程 Python 以 UTF-8 读写标准流。
+ * 中文版 Windows 控制台默认代码页为 GBK(936)，Python 会按此编码把中文写进 stdout/stderr 管道，
+ * 而 Node 端一律按 UTF-8 解码，导致运行日志与状态文案整段乱码。显式声明后两端统一为 UTF-8。
+ */
+export const PY_UTF8_ENV: NodeJS.ProcessEnv = {
+	PYTHONIOENCODING: "utf-8",
+	PYTHONUTF8: "1",
+};
+
+/** 在继承 process.env 的基础上叠加可选覆盖项，并统一附加 UTF-8 强制项，供所有 Python 子进程使用。 */
+export function childEnv(extra?: NodeJS.ProcessEnv): NodeJS.ProcessEnv {
+	return { ...process.env, ...extra, ...PY_UTF8_ENV };
+}
+
 export interface VenvPaths {
 	venvDir: string;
 	python: string;
@@ -127,7 +142,7 @@ function checkPythonExecutable(cmd: string): Promise<PythonDetectResult> {
 					"-c",
 					"import sys; print(f'{sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}')",
 				],
-				{ windowsHide: true },
+				{ env: childEnv(), windowsHide: true },
 			);
 		} catch (e) {
 			resolve({ ok: false, error: String(e) });
@@ -181,7 +196,7 @@ export function ensureVenv(
 		let err = "";
 		let child: ChildProcess;
 		try {
-			child = spawn(systemPython, ["-m", "venv", paths.venvDir], { windowsHide: true });
+			child = spawn(systemPython, ["-m", "venv", paths.venvDir], { env: childEnv(), windowsHide: true });
 		} catch (e) {
 			resolve({ ok: false, error: `启动 venv 创建命令失败：${String(e)}` });
 			return;
@@ -254,7 +269,7 @@ export function checkDeps(venvPython: string): Promise<DepsCheckResult> {
 		let err = "";
 		let child: ChildProcess;
 		try {
-			child = spawn(venvPython, ["-c", code], { windowsHide: true });
+			child = spawn(venvPython, ["-c", code], { env: childEnv(), windowsHide: true });
 		} catch (e) {
 			resolve({
 				ok: false,
@@ -321,7 +336,7 @@ export function installDeps(
 		let stderrBuffer = "";
 		let child: ChildProcess;
 		try {
-			child = spawn(venvPython, args, { windowsHide: true });
+			child = spawn(venvPython, args, { env: childEnv(), windowsHide: true });
 		} catch (e) {
 			resolve({ ok: false, error: `启动 pip 安装命令失败：${String(e)}` });
 			return;
@@ -501,12 +516,11 @@ export async function runEnvDoctor(
 			let out = "";
 			try {
 				const child = spawn(paths.python, [scriptPath!, "--doctor"], {
-					env: {
-						...process.env,
+					env: childEnv({
 						YT_DLP_PATH: paths.ytdlp,
 						PODCAST_ASR_MODEL_ROOT: paths.modelsDir,
 						PATH: `${paths.binDir}${isWin ? ";" : ":"}${process.env.PATH || ""}`,
-					},
+					}),
 					windowsHide: true,
 				});
 				child.stdout?.on("data", (d) => (out += d.toString()));

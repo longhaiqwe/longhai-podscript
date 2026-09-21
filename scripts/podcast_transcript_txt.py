@@ -35,6 +35,15 @@ import xml.etree.ElementTree as ET
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
+# 强制标准输出/错误使用 UTF-8。中文版 Windows 控制台默认代码页为 GBK(936)，
+# 否则脚本向调用方管道打印的中文会被按 GBK 编码，Node 端按 UTF-8 解码后整段乱码。
+# reconfigure 自 Python 3.7 起可用（本脚本要求 3.9+）；个别被替换的流没有该方法时静默跳过。
+for _stream in (sys.stdout, sys.stderr):
+    try:
+        _stream.reconfigure(encoding="utf-8")
+    except Exception:
+        pass
+
 UA = (
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
     "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0 Safari/537.36"

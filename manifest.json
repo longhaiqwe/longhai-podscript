@@ -1,7 +1,7 @@
 {
 	"id": "longhai-podscript",
 	"name": "Longhai Podscript",
-	"version": "0.7.1",
+	"version": "0.7.2",
 	"minAppVersion": "1.7.2",
 	"description": "Fetch full podcast transcripts (YouTube, Apple Podcasts, audio links, or a title) — reuse existing captions or transcribe audio locally with Whisper — and save them as structured notes.",
 	"author": "龙海",

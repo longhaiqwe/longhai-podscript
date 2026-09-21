@@ -35,7 +35,7 @@ export interface RunResult {
 	lastLine: string;
 }
 
-import { MODELS_DIR } from "./env";
+import { MODELS_DIR, childEnv } from "./env";
 
 /**
  * 定位转写脚本：优先用用户在设置里显式指定的路径；否则把插件内置脚本释放到本地数据目录并使用。
@@ -61,11 +61,10 @@ export function runDoctor(
 	return new Promise((resolve) => {
 		let out = "";
 		let child: ChildProcess;
-		const env: NodeJS.ProcessEnv = {
-			...process.env,
+		const env: NodeJS.ProcessEnv = childEnv({
 			...(envOptions?.ytdlpPath ? { YT_DLP_PATH: envOptions.ytdlpPath } : {}),
-			...(envOptions?.modelsDir ? { PODCAST_ASR_MODEL_ROOT: envOptions.modelsDir } : { PODCAST_ASR_MODEL_ROOT: MODELS_DIR }),
-		};
+			PODCAST_ASR_MODEL_ROOT: envOptions?.modelsDir || MODELS_DIR,
+		});
 		if (envOptions?.binDir) {
 			const sep = process.platform === "win32" ? ";" : ":";
 			env.PATH = `${envOptions.binDir}${sep}${process.env.PATH || ""}`;
@@ -110,11 +109,10 @@ export function runTranscript(opts: RunOptions): RunHandle {
 			args.push("--podcast", opts.podcast.trim());
 		}
 
-		const env: NodeJS.ProcessEnv = {
-			...process.env,
+		const env: NodeJS.ProcessEnv = childEnv({
 			...(opts.ytdlpPath ? { YT_DLP_PATH: opts.ytdlpPath } : {}),
-			...(opts.modelsDir ? { PODCAST_ASR_MODEL_ROOT: opts.modelsDir } : { PODCAST_ASR_MODEL_ROOT: MODELS_DIR }),
-		};
+			PODCAST_ASR_MODEL_ROOT: opts.modelsDir || MODELS_DIR,
+		});
 		if (opts.binDir) {
 			const sep = process.platform === "win32" ? ";" : ":";
 			env.PATH = `${opts.binDir}${sep}${process.env.PATH || ""}`;
@@ -126,6 +124,10 @@ export function runTranscript(opts: RunOptions): RunHandle {
 			reject(e instanceof Error ? e : new Error(String(e)));
 			return;
 		}
+
+		// 明确按 UTF-8 解码，让 StringDecoder 处理跨数据块边界的多字节汉字，避免边界处出现零星乱码。
+		child.stdout?.setEncoding("utf8");
+		child.stderr?.setEncoding("utf8");
 
 		let stderr = "";
 		let stdoutBuffer = "";
